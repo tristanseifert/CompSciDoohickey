@@ -85,6 +85,11 @@ public class Encoder {
 	 * @return A list of strings.
 	 */
 	public List<String> read() {
+		// check if the file exists
+		if(!this.f.exists()) {
+			return null;
+		}
+		
 		// read file
 		FileReader dank = null;
 		try {
@@ -136,6 +141,14 @@ public class Encoder {
 		String file = new String(encVal);
 		System.out.println(file);
 		
-		return null;
+		return splitStringToList(file);
+	}
+	
+	/**
+	 * Converts a string of text into a list of strings, splitting by each
+	 * string by the newline character.
+	 */
+	private List<String> splitStringToList(String s) {
+		return Arrays.asList(s.split("\\s*:\\s*"));
 	}
 }

@@ -13,6 +13,16 @@ public class BackEnd {
 	Encoder enc = new Encoder("messages.bin");
 	
 	/**
+	 * Initialises the backend by reading messages and parsing them.
+	 */
+	public BackEnd() {
+		// read messages
+		List<String> rawMsg = enc.read();
+		
+		System.out.println(rawMsg);
+	}
+	
+	/**
 	 * Returns a list of messages for the given user. If the user does not have
 	 * any messages, NULL is returned.
 	 * 
