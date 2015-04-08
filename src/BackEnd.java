@@ -8,6 +8,11 @@ import java.lang.*;
  */
 public class BackEnd {
 	/**
+	 * Handles encoding/decoding of messages.
+	 */
+	Encoder enc = new Encoder("messages.bin");
+	
+	/**
 	 * Returns a list of messages for the given user. If the user does not have
 	 * any messages, NULL is returned.
 	 * 

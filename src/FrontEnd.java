@@ -7,6 +7,11 @@ public class FrontEnd extends JFrame {
 	private static final long serialVersionUID = 2133338847613583748L;
 
 	/**
+	 * Handles the data storage and parsing of messages.
+	 */
+	BackEnd back = new BackEnd();
+	
+	/**
 	 * Creates the thingie.
 	 */
 	public FrontEnd() {

@@ -1,5 +1,12 @@
+import java.security.*;
+
+import javax.crypto.*;
+import javax.crypto.spec.*;
+
 import java.util.*;
-import java.lang.*;
+import java.io.*;
+
+import javax.xml.bind.DatatypeConverter;
 
 /**
  * Handles reading and writing of things to an encrypted file.
@@ -7,6 +14,14 @@ import java.lang.*;
  * @author tristan
  */
 public class Encoder {
+	private File f;
+	
+	/**
+	 * Key for the AES encryption
+	 */
+	private String _k = "C0BAE23DF8B51807B3E17D21925FADF273A70181E1D81B8EDE6C76A5C1F1716E";
+	Key aes_key;
+	
 	/**
 	 * Creates an encoder that can read/write encoded text to/from the specified
 	 * file. The file contains only encrypted text.
@@ -14,7 +29,11 @@ public class Encoder {
 	 * @param filename
 	 */
 	public Encoder(String filename) {
+		f = new File(filename);
 		
+		// allocate the cipher
+		byte[] keyValue = DatatypeConverter.parseHexBinary(this._k);
+		this.aes_key = new SecretKeySpec(keyValue, "AES");
 	}
 	
 	/**
@@ -23,7 +42,40 @@ public class Encoder {
 	 * @param plaintext
 	 */
 	public void write(String plaintext) {
+		// encrypt using AES256
+		Cipher c1 = null;
 		
+		try {
+			c1 = Cipher.getInstance("AES");
+			c1.init(Cipher.ENCRYPT_MODE, this.aes_key);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			System.err.println("Invalid Key !!!");
+			e.printStackTrace();
+		}
+
+		// encrypt the passed in string
+		byte[] encVal = {};
+		
+		try {
+			encVal = c1.doFinal(plaintext.getBytes());
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		
+		String encryptedValue = Base64.getEncoder().encodeToString(encVal);
+		
+		// write the string to the file
+		FileWriter fw;
+		try {
+			fw = new FileWriter(this.f);
+			fw.write(encryptedValue);
+			fw.close();
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	/**
@@ -33,6 +85,57 @@ public class Encoder {
 	 * @return A list of strings.
 	 */
 	public List<String> read() {
+		// read file
+		FileReader dank = null;
+		try {
+			dank = new FileReader(this.f);
+		} catch (FileNotFoundException e1) {
+			e1.printStackTrace();
+		}
+		
+		BufferedReader br = new BufferedReader(dank); 
+		
+		String s, str = "";
+		
+		try {
+			while((s = br.readLine()) != null) { 
+				str += s;
+			}
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		} 
+		
+		
+		// decode base64
+		byte[] encrypted = Base64.getDecoder().decode(str);
+		
+		// set up cipher for AES256 decryption
+		Cipher c1 = null;
+		
+		try {
+			c1 = Cipher.getInstance("AES");
+			c1.init(Cipher.DECRYPT_MODE, this.aes_key);
+		} catch (NoSuchAlgorithmException | NoSuchPaddingException e) {
+			e.printStackTrace();
+		} catch (InvalidKeyException e) {
+			System.err.println("Invalid Key !!!");
+			e.printStackTrace();
+		}
+
+		// decrypt
+		byte[] encVal = {};
+		
+		try {
+			encVal = c1.doFinal(encrypted);
+		} catch (IllegalBlockSizeException | BadPaddingException e) {
+			e.printStackTrace();
+		}
+		
+		// parse it
+		String file = new String(encVal);
+		System.out.println(file);
+		
 		return null;
 	}
 }
