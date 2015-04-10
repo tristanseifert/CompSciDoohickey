@@ -6,8 +6,6 @@ import javax.crypto.spec.*;
 import java.util.*;
 import java.io.*;
 
-import javax.xml.bind.DatatypeConverter;
-
 /**
  * Handles reading and writing of things to an encrypted file.
  * 
@@ -19,7 +17,7 @@ public class Encoder {
 	/**
 	 * Key for the AES encryption
 	 */
-	private String _k = "C0BAE23DF8B51807B3E17D21925FADF273A70181E1D81B8EDE6C76A5C1F1716E";
+	private String _k = "aD1uX2NfqeYJ1yHN";
 	Key aes_key;
 	
 	/**
@@ -31,9 +29,8 @@ public class Encoder {
 	public Encoder(String filename) {
 		f = new File(filename);
 		
-		// allocate the cipher
-		byte[] keyValue = DatatypeConverter.parseHexBinary(this._k);
-		this.aes_key = new SecretKeySpec(keyValue, "AES");
+		// allocate the key value
+		this.aes_key = new SecretKeySpec(this._k.getBytes(), "AES");
 	}
 	
 	/**
@@ -111,6 +108,14 @@ public class Encoder {
 			e1.printStackTrace();
 		} 
 		
+		// close reader
+		try {
+			br.close();
+		} catch (IOException e1) {
+			// TODO Auto-generated catch block
+			e1.printStackTrace();
+		}
+		
 		
 		// decode base64
 		byte[] encrypted = Base64.getDecoder().decode(str);
@@ -139,7 +144,6 @@ public class Encoder {
 		
 		// parse it
 		String file = new String(encVal);
-		System.out.println(file);
 		
 		return splitStringToList(file);
 	}
@@ -149,6 +153,6 @@ public class Encoder {
 	 * string by the newline character.
 	 */
 	private List<String> splitStringToList(String s) {
-		return Arrays.asList(s.split("\\s*:\\s*"));
+		return Arrays.asList(s.split("\\n"));
 	}
 }
