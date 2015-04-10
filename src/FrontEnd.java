@@ -76,7 +76,9 @@ public class FrontEnd extends JFrame {
 								JOptionPane.ERROR_MESSAGE);
 					}
 				} else {
-					JOptionPane.showMessageDialog(frame, "Please enter a username.", "Add Message", JOptionPane.ERROR_MESSAGE);
+					JOptionPane.showMessageDialog(frame, 
+							"Please enter a username.", "Add Message", 
+							JOptionPane.ERROR_MESSAGE);
 				}
 			}
 		});
@@ -84,8 +86,35 @@ public class FrontEnd extends JFrame {
         // remove handler
         removeButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				// TODO Auto-generated method stub
-				
+				if(tree.getSelectionCount() == 1) {					
+					// check selection
+					TreePath selection = tree.getSelectionPath();
+					
+					if(selection.getPathCount() == 3) {
+						// confirm
+						int yo = JOptionPane.showConfirmDialog(frame, 
+								"Are you sure you want to delete this message?", 
+								"Delete Message", JOptionPane.WARNING_MESSAGE);
+						
+						// if yes, delete
+						if(yo == JOptionPane.YES_OPTION) {						
+							String user = ((DefaultMutableTreeNode) selection.getPathComponent(1)).toString();
+							String message = ((DefaultMutableTreeNode) selection.getPathComponent(2)).toString();
+							
+							back.removeMessage(user, message);
+							createTreeModel();
+						}
+					} else {
+						JOptionPane.showMessageDialog(frame, 
+								"Please select a single message, not a user.", 
+								"Remove Message", 
+								JOptionPane.ERROR_MESSAGE);						
+					}
+				} else {
+					JOptionPane.showMessageDialog(frame, 
+							"Please select a single message.", "Remove Message", 
+							JOptionPane.ERROR_MESSAGE);
+				}
 			}
 		});
         

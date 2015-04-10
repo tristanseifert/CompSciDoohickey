@@ -70,9 +70,41 @@ public class BackEnd {
 			this.messages.put(username, a);
 		}
 		
+		this.save();
+	}
+	
+	/**
+	 * Removes a message by the user.
+	 * 
+	 * @param username
+	 * @param msg
+	 */
+	public void removeMessage(String username, String msg) {
+		this.messages.get(username).remove(msg);
+		
+		// if the user has no more messages, delete them
+		if(this.messages.get(username).isEmpty()) {
+			this.messages.remove(username);
+		}
+		
 		// write
-		String s = convertToString();
-		this.enc.write(s);
+		this.save();
+	}
+	
+	/**
+	 * Gets all users with messages.
+	 * 
+	 * @return A list of all users.
+	 */
+	public List<String> getUsers() {
+		Set<String> keys = this.messages.keySet();
+		ArrayList<String> list = new ArrayList<String>(keys.size());
+		
+		for (String string : keys) {
+			list.add(string);
+		}
+		
+		return list;
 	}
 	
 	/**
@@ -94,18 +126,10 @@ public class BackEnd {
 	}
 	
 	/**
-	 * Gets all users with messages.
-	 * 
-	 * @return A list of all users.
+	 * Writes the data out to a string.
 	 */
-	public List<String> getUsers() {
-		Set<String> keys = this.messages.keySet();
-		ArrayList<String> list = new ArrayList<String>(keys.size());
-		
-		for (String string : keys) {
-			list.add(string);
-		}
-		
-		return list;
+	private void save() {
+		String s = convertToString();
+		this.enc.write(s);
 	}
 }
